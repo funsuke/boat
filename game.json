@@ -1,0 +1,70 @@
+{
+	"width": 1280,
+	"height": 720,
+	"fps": 30,
+	"main": "./script/main.js",
+	"assets": {
+		"main": {
+			"type": "script",
+			"path": "script/main.js",
+			"global": true
+		},
+		"SceneTitle": {
+			"type": "script",
+			"path": "script/SceneTitle.js",
+			"global": true
+		},
+		"button": {
+			"type": "image",
+			"path": "image/button.png",
+			"width": 800,
+			"height": 320
+		},
+		"title": {
+			"type": "image",
+			"path": "image/title.png",
+			"width": 1280,
+			"height": 720
+		},
+		"ControllerTitle": {
+			"type": "script",
+			"path": "script/coe/ControllerTitle.js",
+			"global": true
+		}
+	},
+	"moduleMainScripts": {
+		"@akashic-extension/coe": "node_modules/@akashic-extension/coe/lib/index.js",
+		"@akashic-extension/akashic-hover-plugin": "node_modules/@akashic-extension/akashic-hover-plugin/lib/index.js",
+		"@akashic-extension/resolve-player-info": "node_modules/@akashic-extension/resolve-player-info/lib/index.js"
+	},
+	"environment": {
+		"sandbox-runtime": "3",
+		"nicolive": {
+			"supportedModes": [
+				"multi_admission"
+			]
+		},
+		"external": {
+			"coeLimited": "0",
+			"atsumaru": "0"
+		}
+	},
+	"globalScripts": [
+		"node_modules/@akashic-extension/coe/lib/Controller.js",
+		"node_modules/@akashic-extension/coe/lib/SceneWatcher.js",
+		"node_modules/@akashic-extension/coe/lib/View.js",
+		"node_modules/@akashic-extension/coe/lib/global.js",
+		"node_modules/@akashic-extension/coe/lib/impl/BaseController.js",
+		"node_modules/@akashic-extension/coe/lib/impl/COEController.js",
+		"node_modules/@akashic-extension/coe/lib/impl/COEMessageEventHandler.js",
+		"node_modules/@akashic-extension/coe/lib/impl/Scene.js",
+		"node_modules/@akashic-extension/coe/lib/impl/index.js",
+		"node_modules/@akashic-extension/coe/lib/index.js",
+		"node_modules/@akashic-extension/coe/lib/parameters.js",
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/Converter.js",
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/HoverPlugin.js",
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/index.js",
+		"node_modules/@akashic-extension/resolve-player-info/lib/FallbackDialog.js",
+		"node_modules/@akashic-extension/resolve-player-info/lib/index.js"
+	]
+}
