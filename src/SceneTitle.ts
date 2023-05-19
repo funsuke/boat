@@ -4,7 +4,7 @@ import {
 import { PlayerInfo as GetPlayerInfo, resolvePlayerInfo } from "@akashic-extension/resolve-player-info";
 import {
 	TitleActionData, TitleCommand, ControllerTitle, titleActionType, titleCommandType
-} from "./coe/ControllerTitle";
+} from "./controller/ControllerTitle";
 
 export interface TitleSceneParameter extends SceneParameters<TitleCommand, TitleActionData> {
 	//
