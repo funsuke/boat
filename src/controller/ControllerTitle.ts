@@ -22,6 +22,10 @@ export enum titleActionType {
 	 * 舟券非購入
 	 */
 	erasureGambler = "erasure_gambler",
+	/**
+	 * 名前取得
+	 */
+	// getName = "get_name",
 }
 
 /**
@@ -35,62 +39,84 @@ export enum titleCommandType {
 	/**
 	 * 勝負人数の変更
 	 */
-	changeGamblerNum = "change_gamblerNum"
+	changeGamblerNum = "change_gamblerNum",
+	/**
+	 * 名を与える
+	 */
+	// giveName = "give_name",
 }
 
-// export type TitleActionData = TitleActionData;
+/**
+ * タイトルシーンの ActionData
+ */
+export type TitleActionData = EntryPlayerAction | ErasurePlayerAction;
 
 /**
- * タイトルシーンの Action Data
+ * プレイヤー参加
  */
-export interface TitleActionData {
+export interface EntryPlayerAction {
 	type: titleActionType;
-	name: string;
-}
-
-export type TitleCommand = ChangePlayerCommand | ChangeGamblerCommand;
-
-/**
- * 選手人数が変化した時の Command
- */
-export interface ChangePlayerCommand {
-	type: titleCommandType.changePlayerNum;
-	num: number;
+	info: PlayerInfo;
 }
 
 /**
- * 勝負人数が変化した時の Command
+ * プレイヤー参加拒否
  */
-export interface ChangeGamblerCommand {
-	type: titleCommandType.changeGamblerNum;
+export interface ErasurePlayerAction {
+	type: titleActionType;
+}
+
+/**
+ * タイトルシーンの Command
+ */
+export type TitleCommand = ChangePlayerNumCommand;
+
+/**
+ * 人数が変化した時の Command
+ */
+export interface ChangePlayerNumCommand {
+	type: titleCommandType;
 	num: number;
+}
+
+
+// export interface GivePlayerName {
+// 	type: titleCommandType;
+// 	playerInfo: PlayerInfo;
+// }
+
+export enum playerRole {
+	entryPlayer = "選手参加者",
+	player1 = "１号艇",
+	player2 = "２号艇",
+	player3 = "３号艇",
+	player4 = "４号艇",
+	player5 = "５号艇",
+	player6 = "６号艇",
+	gambler = "勝負師",
+	none = "傍観者",
 }
 
 export interface PlayerInfo {
 	id: string;
 	name: string;
+	role: playerRole;
 }
 
 /**
  * タイトル用 Controller
  */
 export class ControllerTitle extends COEController<TitleCommand, TitleActionData> {
-	private playerNum: number;
-	private gamblerNum: number;
-	private playersInfo: PlayerInfo[];
-	private gamblersInfo: PlayerInfo[];
+	private playersInfo: PlayerInfo[] = [];
+	private gamblersInfo: PlayerInfo[] = [];
 
 	/**
 	 * コンストラクタ
 	 */
 	constructor() {
+		console.log("********ControllerTitle::constructor");
 		//
 		super();
-		// プロパティ初期化
-		this.playerNum = 0;
-		this.playersInfo = [];
-		this.gamblerNum = 0;
-		this.gamblersInfo = [];
 		// Action の受信トリガの登録
 		this.onActionReceive.add(this.onActionReceived, this);
 	}
@@ -110,6 +136,8 @@ export class ControllerTitle extends COEController<TitleCommand, TitleActionData
 	 * @param action Action
 	 */
 	onActionReceived(action: Action<TitleActionData>): void {
+		// debug
+		console.log("********ControllerTitle::onActionReceived");
 		// Action.dataの判定
 		const data = action.data;
 		if (data == null) return;
@@ -117,28 +145,24 @@ export class ControllerTitle extends COEController<TitleCommand, TitleActionData
 		// プレイヤー情報の更新
 		this.updatePlayersInfo(data, action.player.id);
 		// broadcast の設定
-		let type: titleCommandType;
-		let num: number = 0;
+		let command: ChangePlayerNumCommand;
 		switch (data.type) {
-			// Actionが選手参加だった場合
+			// Actionが選手だった場合
 			case titleActionType.entryPlayer:
-				type = titleCommandType.changePlayerNum;
-				num = ++this.playerNum;
-				break;
-			// Actionが選手不参加だった場合
 			case titleActionType.erasurePlayer:
-				type = titleCommandType.changePlayerNum;
-				num = --this.playerNum;
+				//
+				command = {
+					type: titleCommandType.changePlayerNum,
+					num: this.playersInfo.length,
+				};
 				break;
 			// Actionが勝負参加だった場合
 			case titleActionType.entryGambler:
-				type = titleCommandType.changeGamblerNum;
-				num = ++this.gamblerNum;
-				break;
-			// Actionが勝負不参加だった場合
 			case titleActionType.erasureGambler:
-				type = titleCommandType.changeGamblerNum;
-				num = --this.gamblerNum;
+				command = {
+					type: titleCommandType.changeGamblerNum,
+					num: this.gamblersInfo.length,
+				};
 				break;
 			// その他(データが壊れてる時しか入らないか？) start?いつ
 			default:
@@ -146,10 +170,17 @@ export class ControllerTitle extends COEController<TitleCommand, TitleActionData
 		}
 		// numの調整(無いと思うが)
 		// パラメータをブロードキャスト
-		this.broadcast({
-			type: type,
-			num: num,
-		});
+		this.broadcast(command);
+		// debug
+		console.log("****ControllerTitle::updatePlayersInfo");
+		console.log("player");
+		for (let i = 0; i < this.playersInfo.length; i++) {
+			console.log(this.playersInfo[i].name);
+		}
+		console.log("gambler");
+		for (let i = 0; i < this.gamblersInfo.length; i++) {
+			console.log(this.gamblersInfo[i].name);
+		}
 	}
 
 	/**
@@ -158,21 +189,16 @@ export class ControllerTitle extends COEController<TitleCommand, TitleActionData
 	 * @param id string
 	 */
 	private updatePlayersInfo(data: TitleActionData, id: string): void {
+		console.log("ControllerTitle::updatePlayerInfo");
 		switch (data.type) {
 			case titleActionType.entryPlayer:
-				this.playersInfo.push({
-					id: id,
-					name: data.name,
-				});
+				this.playersInfo.push((data as EntryPlayerAction).info);
 				break;
 			case titleActionType.erasurePlayer:
 				this.removePlayerInfoById(this.playersInfo, id);
 				break;
 			case titleActionType.entryGambler:
-				this.gamblersInfo.push({
-					id: id,
-					name: data.name,
-				});
+				this.gamblersInfo.push((data as EntryPlayerAction).info);
 				break;
 			case titleActionType.erasureGambler:
 				this.removePlayerInfoById(this.gamblersInfo, id);
@@ -192,5 +218,42 @@ export class ControllerTitle extends COEController<TitleCommand, TitleActionData
 				break;
 			}
 		}
+	}
+
+	/**
+	 * プレイヤー名が無いときの選手名
+	 * @param num number
+	 * @returns string
+	 */
+	private getPlayerName(playerInfo: PlayerInfo, num: number): void {
+		if (num <= 0) {
+			if (playerInfo.role === playerRole.entryPlayer) {
+				playerInfo.name = "名無しの選手";
+			} else if (playerInfo.role === playerRole.gambler) {
+				playerInfo.name = "名無しのギャンブラー";
+			}
+		} else {
+			if (playerInfo.role === playerRole.entryPlayer) {
+				playerInfo.name = "選手" + this.get26Decimal(num);
+			} else if (playerInfo.role === playerRole.gambler) {
+				playerInfo.name = "勝負師" + this.get26Decimal(num);
+			}
+		}
+	}
+
+	/**
+	 * number を 26(alphabet)進数の string に変換する
+	 * @param num number
+	 * @returns string
+	 */
+	private get26Decimal(num: number): string {
+		if (num <= 0) return "";
+		let i: number = num - 1;
+		let retStr: string = "";
+		do {
+			retStr = String.fromCharCode(65 + (i % 26)) + retStr;
+			i = Math.floor(i / 26) - 1;
+		} while (i >= 0);
+		return retStr;
 	}
 }

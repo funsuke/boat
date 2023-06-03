@@ -9,26 +9,38 @@
 			"path": "script/main.js",
 			"global": true
 		},
-		"SceneTitle": {
-			"type": "script",
-			"path": "script/SceneTitle.js",
-			"global": true
-		},
 		"button": {
 			"type": "image",
 			"path": "image/button.png",
 			"width": 800,
-			"height": 320
+			"height": 400,
+			"global": true
 		},
 		"title": {
 			"type": "image",
 			"path": "image/title.png",
 			"width": 1280,
-			"height": 720
+			"height": 720,
+			"global": true
 		},
 		"ControllerTitle": {
 			"type": "script",
-			"path": "script/coe/ControllerTitle.js",
+			"path": "script/controller/ControllerTitle.js",
+			"global": true
+		},
+		"params": {
+			"type": "script",
+			"path": "script/params.js",
+			"global": true
+		},
+		"SceneEntry": {
+			"type": "script",
+			"path": "script/SceneEntry.js",
+			"global": true
+		},
+		"SceneGetName": {
+			"type": "script",
+			"path": "script/SceneGetName.js",
 			"global": true
 		}
 	},

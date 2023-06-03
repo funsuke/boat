@@ -11,6 +11,7 @@ ffmpeg -ss 0.0 -to 1.5 -i se.mp3 -af volume=-5dB se.ogg
 ffmpeg -i input1.mp3 -i input2.mp3 -filter_complex "concat=n=2:v=0:a=1" output.mp3
 akashic export html -f --output file.zip --atsumaru
 akashic export html --bundle --minify --magnify --atsumaru -o game.zip
+akashic export zip -O game.zip --nicolive -M
 */
 /*
 scene.onUpdate.add(function() {
@@ -78,8 +79,8 @@ let syncRandom = param.random;	//	g.game.random
 
 */
 
-import { SceneTitle } from "./SceneTitle";
-
+import { GameParams } from "./params";
+import { SceneGetName } from "./SceneGetName";
 
 // 縦75m以上×横440m以上
 // スタートラインから150m離れた競走水面上には、赤と白の蛍光塗料が塗られた[9]2つのブイ（ターンマーク）が浮かんでいる
@@ -125,8 +126,24 @@ import { SceneTitle } from "./SceneTitle";
 // 旋回(復原力無し)
 // Θ=方位角(yawing or turning angle)
 
-function main(param: g.GameMainParameterObject): void {
-	g.game.pushScene(new SceneTitle(param));
+function main(args: g.GameMainParameterObject): void {
+	// パラメータ初期設定
+	GameParams.init();
+	// 生主IDの取得
+	const emptyScene = new g.Scene({ game: g.game });
+	g.game.onJoin.addOnce(ev => {
+		GameParams.liverId = ev.player.id || "";
+		g.game.replaceScene(start(args));
+	});
+	g.game.pushScene(emptyScene);
 };
+
+function start(args: g.GameMainParameterObject): g.Scene {
+	const scene = new SceneGetName({
+		game: g.game,
+		assetIds: ["title", "button"],
+	}, args);
+	return scene;
+}
 
 export = main;
