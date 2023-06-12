@@ -1,3 +1,5 @@
+import { PlayerInfo } from "./type";
+
 export class GameParams {
 	private static _isServer: boolean = false;
 	private static _operation: "nicolive" | undefined;
@@ -9,6 +11,7 @@ export class GameParams {
 	public static get isServer(): boolean {
 		return GameParams._isServer;
 	}
+	public static playerInfo: PlayerInfo;
 
 	static init(): void {
 		if (typeof window === "undefined") {

@@ -13,19 +13,18 @@
 			"type": "image",
 			"path": "image/button.png",
 			"width": 800,
-			"height": 400,
+			"height": 480,
 			"global": true
 		},
 		"title": {
 			"type": "image",
 			"path": "image/title.png",
 			"width": 1280,
-			"height": 720,
-			"global": true
+			"height": 720
 		},
-		"ControllerTitle": {
+		"controllerTitle": {
 			"type": "script",
-			"path": "script/controller/ControllerTitle.js",
+			"path": "script/controller/controllerTitle.js",
 			"global": true
 		},
 		"params": {
@@ -33,21 +32,83 @@
 			"path": "script/params.js",
 			"global": true
 		},
-		"SceneEntry": {
+		"type": {
 			"type": "script",
-			"path": "script/SceneEntry.js",
+			"path": "script/type.js",
 			"global": true
 		},
-		"SceneGetName": {
+		"makeName": {
 			"type": "script",
-			"path": "script/SceneGetName.js",
+			"path": "script/makeName.js",
 			"global": true
+		},
+		"createEntity": {
+			"type": "script",
+			"path": "script/createEntity.js",
+			"global": true
+		},
+		"entityButton": {
+			"type": "script",
+			"path": "script/entityButton.js",
+			"global": true
+		},
+		"controllerSelect": {
+			"type": "script",
+			"path": "script/controller/controllerSelect.js",
+			"global": true
+		},
+		"titleGambler": {
+			"type": "image",
+			"path": "image/titleGambler.png",
+			"width": 1280,
+			"height": 720
+		},
+		"titlePlayer": {
+			"type": "image",
+			"path": "image/titlePlayer.png",
+			"width": 1280,
+			"height": 720
+		},
+		"sceneEntry": {
+			"type": "script",
+			"path": "script/scene/sceneEntry.js",
+			"global": true
+		},
+		"sceneSelect": {
+			"type": "script",
+			"path": "script/scene/sceneSelect.js",
+			"global": true
+		},
+		"ball": {
+			"type": "image",
+			"path": "image/ball.png",
+			"width": 200,
+			"height": 25
+		},
+		"gara": {
+			"type": "image",
+			"path": "image/gara.png",
+			"width": 1000,
+			"height": 250
+		},
+		"role": {
+			"type": "image",
+			"path": "image/role.png",
+			"width": 1200,
+			"height": 800
+		},
+		"window": {
+			"type": "image",
+			"path": "image/window.png",
+			"width": 900,
+			"height": 300
 		}
 	},
 	"moduleMainScripts": {
 		"@akashic-extension/coe": "node_modules/@akashic-extension/coe/lib/index.js",
 		"@akashic-extension/akashic-hover-plugin": "node_modules/@akashic-extension/akashic-hover-plugin/lib/index.js",
-		"@akashic-extension/resolve-player-info": "node_modules/@akashic-extension/resolve-player-info/lib/index.js"
+		"@akashic-extension/resolve-player-info": "node_modules/@akashic-extension/resolve-player-info/lib/index.js",
+		"@akashic-extension/akashic-label": "node_modules/@akashic-extension/akashic-label/lib/index.js"
 	},
 	"environment": {
 		"sandbox-runtime": "3",
@@ -62,6 +123,9 @@
 		}
 	},
 	"globalScripts": [
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/Converter.js",
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/HoverPlugin.js",
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/index.js",
 		"node_modules/@akashic-extension/coe/lib/Controller.js",
 		"node_modules/@akashic-extension/coe/lib/SceneWatcher.js",
 		"node_modules/@akashic-extension/coe/lib/View.js",
@@ -73,10 +137,12 @@
 		"node_modules/@akashic-extension/coe/lib/impl/index.js",
 		"node_modules/@akashic-extension/coe/lib/index.js",
 		"node_modules/@akashic-extension/coe/lib/parameters.js",
-		"node_modules/@akashic-extension/akashic-hover-plugin/lib/Converter.js",
-		"node_modules/@akashic-extension/akashic-hover-plugin/lib/HoverPlugin.js",
-		"node_modules/@akashic-extension/akashic-hover-plugin/lib/index.js",
 		"node_modules/@akashic-extension/resolve-player-info/lib/FallbackDialog.js",
-		"node_modules/@akashic-extension/resolve-player-info/lib/index.js"
+		"node_modules/@akashic-extension/resolve-player-info/lib/index.js",
+		"node_modules/@akashic-extension/akashic-label/lib/DefaultRubyParser.js",
+		"node_modules/@akashic-extension/akashic-label/lib/FragmentDrawInfo.js",
+		"node_modules/@akashic-extension/akashic-label/lib/Label.js",
+		"node_modules/@akashic-extension/akashic-label/lib/RubyParser.js",
+		"node_modules/@akashic-extension/akashic-label/lib/index.js"
 	]
 }

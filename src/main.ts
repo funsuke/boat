@@ -80,7 +80,8 @@ let syncRandom = param.random;	//	g.game.random
 */
 
 import { GameParams } from "./params";
-import { SceneGetName } from "./SceneGetName";
+import { SceneEntry } from "./scene/sceneEntry";
+// import { SceneGetName } from "./sceneGetName";
 
 // 縦75m以上×横440m以上
 // スタートラインから150m離れた競走水面上には、赤と白の蛍光塗料が塗られた[9]2つのブイ（ターンマーク）が浮かんでいる
@@ -139,9 +140,9 @@ function main(args: g.GameMainParameterObject): void {
 };
 
 function start(args: g.GameMainParameterObject): g.Scene {
-	const scene = new SceneGetName({
+	const scene = new SceneEntry({
 		game: g.game,
-		assetIds: ["title", "button"],
+		assetIds: ["title", "button", "titlePlayer", "titleGambler"],
 	}, args);
 	return scene;
 }

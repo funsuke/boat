@@ -3,118 +3,119 @@ import {
 } from "@akashic-extension/coe";
 
 /**
- * タイトルシーンでの Action の種別
+ * タイトルシーンでの Entry_Action の種別
  */
-export enum titleActionType {
+export const enum titleActionEntryType {
 	/**
 	 * 選手参加
 	 */
-	entryPlayer = "entry_player",
+	player = "entry_player",
+	/**
+	 * 勝負師参加
+	 */
+	gambler = "entry_gambler",
+}
+
+/**
+ * タイトルシーンでの Erasure_Action の種別
+ */
+export const enum titleActionErasureType {
 	/**
 	 * 選手不参加
 	 */
-	erasurePlayer = "erasure_player",
+	player = "erasure_player",
 	/**
-	 * 舟券購入
+	 * 勝負師不参加
 	 */
-	entryGambler = "entry_gambler",
-	/**
-	 * 舟券非購入
-	 */
-	erasureGambler = "erasure_gambler",
-	/**
-	 * 名前取得
-	 */
-	// getName = "get_name",
+	gambler = "erasure_gambler",
+}
+
+/**
+ * シーン操作用の Action の種別
+ */
+export const enum titleActionChangeSceneType {
+	nextScene = "next_scene",
 }
 
 /**
  * タイトルシーンでの Command の種別
  */
-export enum titleCommandType {
+export const enum titleCommandChangePlayerType {
 	/**
 	 * 選手人数の変更
 	 */
 	changePlayerNum = "change_playerNum",
 	/**
-	 * 勝負人数の変更
+	 * 勝負師人数の変更
 	 */
 	changeGamblerNum = "change_gamblerNum",
-	/**
-	 * 名を与える
-	 */
-	// giveName = "give_name",
+}
+
+/**
+ * シーン操作用の Command の種別
+ */
+export const enum titleCommandChangeSceneType {
+	nextScene = "next_scene",
 }
 
 /**
  * タイトルシーンの ActionData
  */
-export type TitleActionData = EntryPlayerAction | ErasurePlayerAction;
+export type TitleAction = ActionEntryPlayer | ActionErasurePlayer | ActionChangeScene;
 
 /**
  * プレイヤー参加
  */
-export interface EntryPlayerAction {
-	type: titleActionType;
-	info: PlayerInfo;
+export interface ActionEntryPlayer {
+	type: titleActionEntryType;
 }
 
 /**
  * プレイヤー参加拒否
  */
-export interface ErasurePlayerAction {
-	type: titleActionType;
+export interface ActionErasurePlayer {
+	type: titleActionErasureType;
+}
+
+/**
+ * シーン操作
+ */
+export interface ActionChangeScene {
+	type: titleActionChangeSceneType;
 }
 
 /**
  * タイトルシーンの Command
  */
-export type TitleCommand = ChangePlayerNumCommand;
+export type TitleCommand = CommandChangePlayer | CommandChangeScene;
 
 /**
  * 人数が変化した時の Command
  */
-export interface ChangePlayerNumCommand {
-	type: titleCommandType;
+export interface CommandChangePlayer {
+	type: titleCommandChangePlayerType;
 	num: number;
 }
 
-
-// export interface GivePlayerName {
-// 	type: titleCommandType;
-// 	playerInfo: PlayerInfo;
-// }
-
-export enum playerRole {
-	entryPlayer = "選手参加者",
-	player1 = "１号艇",
-	player2 = "２号艇",
-	player3 = "３号艇",
-	player4 = "４号艇",
-	player5 = "５号艇",
-	player6 = "６号艇",
-	gambler = "勝負師",
-	none = "傍観者",
-}
-
-export interface PlayerInfo {
-	id: string;
-	name: string;
-	role: playerRole;
+/**
+ * シーンを変更するようにする Command
+ */
+export interface CommandChangeScene {
+	type: titleCommandChangeSceneType;
 }
 
 /**
  * タイトル用 Controller
  */
-export class ControllerTitle extends COEController<TitleCommand, TitleActionData> {
-	private playersInfo: PlayerInfo[] = [];
-	private gamblersInfo: PlayerInfo[] = [];
+export class ControllerTitle extends COEController<TitleCommand, TitleAction> {
+	private playerNum: number = 0;
+	private gamblerNum: number = 0;
 
 	/**
 	 * コンストラクタ
 	 */
 	constructor() {
-		console.log("********ControllerTitle::constructor");
+		console.log("******* controllerTitle::constructor");
 		//
 		super();
 		// Action の受信トリガの登録
@@ -125,6 +126,7 @@ export class ControllerTitle extends COEController<TitleCommand, TitleActionData
 	 * コントローラ破棄時処理
 	 */
 	destroy(): void {
+		console.log("******* controllerTitle::destroy");
 		// Action の受信トリガを解除
 		this.onActionReceive.remove(this.onActionReceived, this);
 		super.destroy();
@@ -135,52 +137,63 @@ export class ControllerTitle extends COEController<TitleCommand, TitleActionData
 	 *
 	 * @param action Action
 	 */
-	onActionReceived(action: Action<TitleActionData>): void {
+	onActionReceived(action: Action<TitleAction>): void {
 		// debug
-		console.log("********ControllerTitle::onActionReceived");
+		console.log("******* controllerTitle::onActionReceived");
 		// Action.dataの判定
 		const data = action.data;
 		if (data == null) return;
 		if (action.player.id == null) return;
-		// プレイヤー情報の更新
-		this.updatePlayersInfo(data, action.player.id);
+		// // プレイヤー情報の更新
+		// this.updatePlayersInfo(data, action.player.id);
 		// broadcast の設定
-		let command: ChangePlayerNumCommand;
+		let command: TitleCommand;
 		switch (data.type) {
-			// Actionが選手だった場合
-			case titleActionType.entryPlayer:
-			case titleActionType.erasurePlayer:
-				//
+			// Actionが選手参加だった場合
+			case titleActionEntryType.player:
 				command = {
-					type: titleCommandType.changePlayerNum,
-					num: this.playersInfo.length,
+					type: titleCommandChangePlayerType.changePlayerNum,
+					num: ++this.playerNum,
+				};
+				break;
+			// Actionが選手不参加だった場合
+			case titleActionErasureType.player:
+				command = {
+					type: titleCommandChangePlayerType.changePlayerNum,
+					num: --this.playerNum,
 				};
 				break;
 			// Actionが勝負参加だった場合
-			case titleActionType.entryGambler:
-			case titleActionType.erasureGambler:
+			case titleActionEntryType.gambler:
 				command = {
-					type: titleCommandType.changeGamblerNum,
-					num: this.gamblersInfo.length,
+					type: titleCommandChangePlayerType.changeGamblerNum,
+					num: ++this.gamblerNum,
+				};
+				break;
+			// Actionが勝負不参加だった場合
+			case titleActionErasureType.gambler:
+				command = {
+					type: titleCommandChangePlayerType.changeGamblerNum,
+					num: --this.gamblerNum,
+				};
+				break;
+			// 次のシーンへ行く Action の場合
+			case titleActionChangeSceneType.nextScene:
+				command = {
+					type: titleCommandChangeSceneType.nextScene,
 				};
 				break;
 			// その他(データが壊れてる時しか入らないか？) start?いつ
 			default:
+				console.log("未知の data.type でした");
 				return;
 		}
-		// numの調整(無いと思うが)
 		// パラメータをブロードキャスト
 		this.broadcast(command);
 		// debug
-		console.log("****ControllerTitle::updatePlayersInfo");
-		console.log("player");
-		for (let i = 0; i < this.playersInfo.length; i++) {
-			console.log(this.playersInfo[i].name);
-		}
-		console.log("gambler");
-		for (let i = 0; i < this.gamblersInfo.length; i++) {
-			console.log(this.gamblersInfo[i].name);
-		}
+		console.log("******* controllerTitle::onActionReceived");
+		console.log("player  : " + this.playerNum);
+		console.log("gambler : " + this.gamblerNum);
 	}
 
 	/**
@@ -188,72 +201,35 @@ export class ControllerTitle extends COEController<TitleCommand, TitleActionData
 	 * @param data TitleActionData
 	 * @param id string
 	 */
-	private updatePlayersInfo(data: TitleActionData, id: string): void {
-		console.log("ControllerTitle::updatePlayerInfo");
-		switch (data.type) {
-			case titleActionType.entryPlayer:
-				this.playersInfo.push((data as EntryPlayerAction).info);
-				break;
-			case titleActionType.erasurePlayer:
-				this.removePlayerInfoById(this.playersInfo, id);
-				break;
-			case titleActionType.entryGambler:
-				this.gamblersInfo.push((data as EntryPlayerAction).info);
-				break;
-			case titleActionType.erasureGambler:
-				this.removePlayerInfoById(this.gamblersInfo, id);
-				break;
-		}
-	}
+	// private updatePlayersInfo(data: TitleAction, id: string): void {
+	// 	console.log("********ControllerTitle::updatePlayerInfo");
+	// 	switch (data.type) {
+	// 		case titleActionEntryType.player:
+	// 			this.playersInfo.push((data as ActionEntryPlayer).info);
+	// 			break;
+	// 		case titleActionErasureType.player:
+	// 			this.removePlayerInfoById(this.playersInfo, id);
+	// 			break;
+	// 		case titleActionEntryType.gambler:
+	// 			this.gamblersInfo.push((data as ActionEntryPlayer).info);
+	// 			break;
+	// 		case titleActionErasureType.gambler:
+	// 			this.removePlayerInfoById(this.gamblersInfo, id);
+	// 			break;
+	// 	}
+	// }
 
 	/**
 	 * PlayerInfo 配列から指定 ID の要素を削除
 	 * @param array PlayerInfo[]
 	 * @param idToRemove string
 	 */
-	private removePlayerInfoById(array: PlayerInfo[], idToRemove: string): void {
-		for (let i = 0; i < array.length; i++) {
-			if (array[i].id === idToRemove) {
-				array.splice(i, 1);
-				break;
-			}
-		}
-	}
-
-	/**
-	 * プレイヤー名が無いときの選手名
-	 * @param num number
-	 * @returns string
-	 */
-	private getPlayerName(playerInfo: PlayerInfo, num: number): void {
-		if (num <= 0) {
-			if (playerInfo.role === playerRole.entryPlayer) {
-				playerInfo.name = "名無しの選手";
-			} else if (playerInfo.role === playerRole.gambler) {
-				playerInfo.name = "名無しのギャンブラー";
-			}
-		} else {
-			if (playerInfo.role === playerRole.entryPlayer) {
-				playerInfo.name = "選手" + this.get26Decimal(num);
-			} else if (playerInfo.role === playerRole.gambler) {
-				playerInfo.name = "勝負師" + this.get26Decimal(num);
-			}
-		}
-	}
-
-	/**
-	 * number を 26(alphabet)進数の string に変換する
-	 * @param num number
-	 * @returns string
-	 */
-	private get26Decimal(num: number): string {
-		if (num <= 0) return "";
-		let i: number = num - 1;
-		let retStr: string = "";
-		do {
-			retStr = String.fromCharCode(65 + (i % 26)) + retStr;
-			i = Math.floor(i / 26) - 1;
-		} while (i >= 0);
-		return retStr;
-	}
+	// private removePlayerInfoById(array: PlayerInfo[], idToRemove: string): void {
+	// 	for (let i = 0; i < array.length; i++) {
+	// 		if (array[i].id === idToRemove) {
+	// 			array.splice(i, 1);
+	// 			break;
+	// 		}
+	// 	}
+	// }
 }

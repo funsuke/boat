@@ -4,7 +4,6 @@
     "lib": [
       "es5",
       "DOM",
-      "ES2015"
     ],
     "noImplicitAny": true,
     "module": "commonjs",
