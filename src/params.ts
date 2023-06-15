@@ -1,4 +1,4 @@
-import { PlayerInfo } from "./type";
+import { PlayerInfo, playerRole } from "./type";
 
 export class GameParams {
 	private static _isServer: boolean = false;
@@ -11,7 +11,12 @@ export class GameParams {
 	public static get isServer(): boolean {
 		return GameParams._isServer;
 	}
-	public static playerInfo: PlayerInfo;
+	public static playerInfo: PlayerInfo = {
+		id: "",
+		name: "",
+		role: playerRole.none,
+		accepted: false,
+	};
 
 	static init(): void {
 		if (typeof window === "undefined") {

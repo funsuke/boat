@@ -61,7 +61,8 @@ export const enum titleCommandChangeSceneType {
 /**
  * タイトルシーンの ActionData
  */
-export type TitleAction = ActionEntryPlayer | ActionErasurePlayer | ActionChangeScene;
+export type TitleAction
+	= ActionEntryPlayer | ActionErasurePlayer | ActionChangeScene;
 
 /**
  * プレイヤー参加
@@ -110,7 +111,6 @@ export interface CommandChangeScene {
 export class ControllerTitle extends COEController<TitleCommand, TitleAction> {
 	private playerNum: number = 0;
 	private gamblerNum: number = 0;
-
 	/**
 	 * コンストラクタ
 	 */
@@ -140,6 +140,8 @@ export class ControllerTitle extends COEController<TitleCommand, TitleAction> {
 	onActionReceived(action: Action<TitleAction>): void {
 		// debug
 		console.log("******* controllerTitle::onActionReceived");
+		console.log(`id   : ${action.player.id}`);
+		console.log(`name : ${action.player.name}`);
 		// Action.dataの判定
 		const data = action.data;
 		if (data == null) return;
@@ -191,7 +193,6 @@ export class ControllerTitle extends COEController<TitleCommand, TitleAction> {
 		// パラメータをブロードキャスト
 		this.broadcast(command);
 		// debug
-		console.log("******* controllerTitle::onActionReceived");
 		console.log("player  : " + this.playerNum);
 		console.log("gambler : " + this.gamblerNum);
 	}

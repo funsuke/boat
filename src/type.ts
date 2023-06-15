@@ -14,4 +14,5 @@ export interface PlayerInfo {
 	id: string;
 	name: string;
 	role: playerRole;
+	accepted: boolean;
 }

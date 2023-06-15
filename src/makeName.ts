@@ -3,7 +3,9 @@ import { playerRole } from "./type";
 export class MakeName {
 	/**
 	 * 名前を取得する
-	 * @param role ロール
+	 * @param role playerRole
+	 * @param num number
+	 * @return string
 	 */
 	public static get(role: playerRole, num: number): string {
 		let name: string = "";
@@ -11,18 +13,18 @@ export class MakeName {
 			if (num === 0) {
 				name = "孤高のレーサー";
 			} else {
-				name = "選手" + this.get26Decimal(num);
+				name = "名無しの選手" + this.get26Decimal(num);
 			}
 		} else if (role === playerRole.gambler) {
 			if (num === 0) {
 				name = "孤高のギャンブラー";
 			} else {
-				name = "勝負師" + this.get26Decimal(num);
+				name = "名無しの勝負師" + this.get26Decimal(num);
 			}
 		} else {
 			console.log("******* MakeName::get");
 			console.log("未定義の playerRole です");
-			return "";
+			return "ゲスト";
 		}
 		return name;
 	}
